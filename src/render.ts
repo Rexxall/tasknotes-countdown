@@ -17,9 +17,14 @@ export interface RenderOptions {
 const TONE_CLASS: Record<Tone, string> = { normal: '', warn: 'is-warn', danger: 'is-danger', done: 'is-done' };
 
 /** The soonest deadline, large. */
-export function renderHero(parent: HTMLElement, item: CountdownItem, o: RenderOptions): HTMLElement {
+export function renderHero(parent: HTMLElement, item: CountdownItem, o: RenderOptions, share?: () => void): HTMLElement {
 	const s = o.strings;
 	const card = parent.createDiv({ cls: ['ap-card', 'tcd-hero', TONE_CLASS[item.countdown.tone]].filter(Boolean) });
+	if (share) {
+		const btn = card.createEl('button', { cls: 'clickable-icon tcd-share', attr: { 'aria-label': s.t('share') } });
+		setIcon(btn, 'share');
+		btn.addEventListener('click', share);
+	}
 	// The top half opens the deadline; the steps below open their own notes.
 	const main = card.createDiv({ cls: 'tcd-hero-main' });
 	link(main, item, o, s.t('nextUp'));
@@ -29,6 +34,12 @@ export function renderHero(parent: HTMLElement, item: CountdownItem, o: RenderOp
 	count.createSpan({ cls: ['tcd-hero-value', 'ap-num', /^\d+$/.test(value) ? '' : 'is-word'].filter(Boolean), text: value });
 	if (unit) count.createSpan({ cls: 'tcd-hero-unit', text: unit });
 	main.createDiv({ cls: 'tcd-hero-date', text: `${s.t('due')} ${s.date(item.due.at, item.due.hasTime, o.now)}` });
+	if (typeof item.elapsed === 'number') {
+		const time = main.createDiv({ cls: 'tcd-time' });
+		const bar = time.createDiv({ cls: 'tcd-time-bar', attr: { role: 'progressbar', 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-valuenow': String(Math.round(item.elapsed * 100)) } });
+		bar.createDiv({ cls: 'tcd-time-fill' }).setCssProps({ '--tcd-elapsed': `${(item.elapsed * 100).toFixed(1)}%` });
+		time.createDiv({ cls: 'tcd-time-label ap-num', text: s.elapsed(item.elapsed) });
+	}
 	if (item.plan) renderPlan(card, item.plan, o);
 	return card;
 }
@@ -95,7 +106,7 @@ function renderRow(group: HTMLElement, item: CountdownItem, o: RenderOptions): v
 	const pill = row.createSpan({ cls: ['ap-pill', 'tcd-pill', 'ap-num', TONE_CLASS[tone]].filter(Boolean) });
 	if (tone === 'done') {
 		setIcon(pill.createSpan({ cls: 'tcd-pill-icon' }), 'check');
-		pill.createSpan({ text: s.t('done') });
+		pill.createSpan({ text: typeof item.finishedEarly === 'number' ? s.finished(item.finishedEarly) : s.t('done') });
 	} else {
 		pill.setText(s.pill(item.countdown));
 	}
@@ -103,7 +114,7 @@ function renderRow(group: HTMLElement, item: CountdownItem, o: RenderOptions): v
 
 /** Click, Enter or Space opens the task note; Cmd/Ctrl-click opens it in a new tab. */
 function link(el: HTMLElement, item: CountdownItem, o: RenderOptions, prefix = ''): void {
-	el.setAttrs({ role: 'link', tabindex: '0', 'aria-label': `${prefix ? `${prefix}: ` : ''}${item.title}, ${item.countdown.tone === 'done' ? o.strings.t('done') : o.strings.pill(item.countdown)}`, 'data-path': item.path });
+	el.setAttrs({ role: 'link', tabindex: '0', 'aria-label': `${prefix ? `${prefix}: ` : ''}${item.title}, ${item.countdown.tone === 'done' ? (typeof item.finishedEarly === 'number' ? o.strings.finished(item.finishedEarly) : o.strings.t('done')) : o.strings.pill(item.countdown)}`, 'data-path': item.path });
 	el.addEventListener('click', evt => o.open(item.path, evt));
 	el.addEventListener('keydown', evt => {
 		if (evt.key === 'Enter' || evt.key === ' ') {

@@ -1,4 +1,4 @@
-import { MarkdownRenderChild, Plugin, PluginSettingTab, Setting, TFile, debounce, getLanguage, normalizePath, type App, type EventRef, type SettingDefinitionItem } from 'obsidian';
+import { MarkdownRenderChild, Notice, Plugin, PluginSettingTab, Setting, TFile, debounce, getLanguage, normalizePath, type App, type EventRef, type SettingDefinitionItem } from 'obsidian';
 import type { CountdownBasesView } from './bases-view';
 import { VIEW_TYPE, createBasesView, viewOptions } from './bases-view';
 import { countdownBase, parseBlock, parseTagList, taskFilter } from './core';
@@ -6,6 +6,8 @@ import { Strings, langFrom } from './i18n';
 import { TaskIndex, arrange, sidebarItems, type Arranged } from './model';
 import type { PlanOptions } from './plan';
 import { renderEmpty, renderSections } from './render';
+import { drawCard } from './share';
+import type { CountdownItem } from './core';
 import { CountdownSidebar, SIDEBAR_TYPE } from './sidebar';
 import { TASK_EVENTS, access, completedStatuses, settingsSnapshot, viewsFolder, type TaskNotesApi } from './tasknotes';
 
@@ -57,6 +59,16 @@ export default class TaskNotesCountdown extends Plugin {
 		this.addRibbonIcon('hourglass', this.strings().t('sidebarTitle'), () => void this.openSidebar());
 		this.addCommand({ id: 'open-next-deadlines', name: this.strings().t('cmdOpen'), callback: () => void this.openSidebar() });
 		this.addCommand({ id: 'open-countdown-base', name: this.strings().t('cmdBase'), callback: () => void this.openCountdownBase() });
+		this.addCommand({
+			id: 'share-next-deadline',
+			name: this.strings().t('cmdShare'),
+			checkCallback: checking => {
+				const next = this.index.loaded ? this.upcoming(new Date()).main.find(i => i.countdown.band !== 'overdue') : undefined;
+				if (!next) return false;
+				if (!checking) void this.share(next);
+				return true;
+			},
+		});
 		this.addSettingTab(new CountdownSettingTab(this.app, this));
 		this.applyStatusBar();
 
@@ -221,6 +233,24 @@ export default class TaskNotesCountdown extends Plugin {
 			file = await this.app.vault.create(path, countdownBase(taskFilter(snapshot), this.strings().t('viewName'), due, status));
 		}
 		if (file instanceof TFile) await this.app.workspace.getLeaf(false).openFile(file);
+	}
+
+	/** Draws the deadline as a 3:4 image. Copies it when the clipboard takes images; otherwise saves it as an attachment. */
+	async share(item: CountdownItem): Promise<void> {
+		const s = this.strings();
+		const now = new Date();
+		const blob = await drawCard(item, s, now);
+		try {
+			await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+			new Notice(s.t('copied'));
+			return;
+		} catch {
+			// Mobile and some desktops refuse images on the clipboard; fall through to a file.
+		}
+		const name = `countdown-${item.title.replace(/[\\/:*?"<>|#^[\]]/g, '-').slice(0, 40)}-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}.png`;
+		const path = await this.app.fileManager.getAvailablePathForAttachment(name);
+		await this.app.vault.createBinary(path, await blob.arrayBuffer());
+		new Notice(`${s.t('saved')} ${path}`);
 	}
 
 	registerBlock(block: CountdownBlock, on: boolean): void {

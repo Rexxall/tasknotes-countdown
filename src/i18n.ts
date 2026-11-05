@@ -41,6 +41,11 @@ const T = {
 	setUrgentDesc: { en: 'Deadlines this close turn orange. Bases views have their own setting.', zh: '离截止这么近的显示为橙色。Bases 视图在视图选项里单独设置。', ja: 'この日数以内はオレンジで表示。Bases ビューはビューの設定で個別に変えられます。' },
 	hoursRange: { en: 'Enter a number of hours from 0.5 to 16.', zh: '请输入 0.5 到 16 之间的小时数。', ja: '0.5〜16 の時間数を入力してください。' },
 	wholeNumber: { en: 'Enter a whole number from 0 to 60.', zh: '请输入 0 到 60 的整数。', ja: '0〜60 の整数を入力してください。' },
+	justFinished: { en: 'Just finished', zh: '刚完成', ja: '最近完了' },
+	share: { en: 'Share as image', zh: '生成分享图', ja: '画像で共有' },
+	copied: { en: 'Image copied.', zh: '图片已复制。', ja: '画像をコピーしました。' },
+	saved: { en: 'Image saved to', zh: '图片已存到', ja: '画像を保存しました：' },
+	cmdShare: { en: 'Share next deadline as image', zh: '把最近的截止生成分享图', ja: '直近の締め切りを画像で共有' },
 	waitingSection: { en: 'Waiting on others', zh: '等别人', ja: '他の人待ち' },
 	tight: { en: 'Tight', zh: '很紧', ja: 'きつい' },
 	statusBarLabel: { en: 'Next deadline. Click to open the list.', zh: '最近的截止日。点击打开列表。', ja: '直近の締め切り。クリックで一覧を開く。' },
@@ -128,6 +133,21 @@ export class Strings {
 		const { lang } = this;
 		if (p.openSteps === 0) return '';
 		return lang === 'zh' ? `还剩 ${p.openSteps} 步` : lang === 'ja' ? `残り${p.openSteps}ステップ` : `${p.openSteps} ${p.openSteps === 1 ? 'step' : 'steps'} left`;
+	}
+
+	/** "62% of the time gone" / "时间已过 62%" / "期間の62%が経過". */
+	elapsed(f: number): string {
+		const p = Math.round(f * 100);
+		return this.lang === 'zh' ? `时间已过 ${p}%` : this.lang === 'ja' ? `期間の${p}%が経過` : `${p}% of the time gone`;
+	}
+
+	/** "3 days early" / "On the day" / "2 days late". */
+	finished(days: number): string {
+		const { lang } = this;
+		if (days === 0) return lang === 'zh' ? '当天完成' : lang === 'ja' ? '当日に完了' : 'On the day';
+		const n = Math.abs(days);
+		if (days > 0) return lang === 'zh' ? `提前 ${n} 天` : lang === 'ja' ? `${n}日前に完了` : `${n} ${n === 1 ? 'day' : 'days'} early`;
+		return lang === 'zh' ? `晚 ${n} 天` : lang === 'ja' ? `${n}日遅れ` : `${n} ${n === 1 ? 'day' : 'days'} late`;
 	}
 
 	more(n: number): string {

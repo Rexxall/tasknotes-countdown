@@ -30,7 +30,7 @@
 .tcd {
 	--tcd-warn-text: color-mix(in srgb, var(--ap-warn) 55%, var(--ap-label));
 	--tcd-bad-text: color-mix(in srgb, var(--ap-bad) 66%, var(--ap-label));
-	--tcd-good-text: color-mix(in srgb, var(--ap-good) 62%, var(--ap-label));
+	--tcd-good-text: color-mix(in srgb, var(--ap-good) 50%, var(--ap-label));
 }
 .tcd .tcd-hero.is-warn .tcd-hero-value { color: color-mix(in srgb, var(--ap-warn) 78%, var(--ap-label)); }
 .tcd .tcd-hero.is-danger .tcd-hero-value { color: color-mix(in srgb, var(--ap-bad) 80%, var(--ap-label)); }
@@ -90,3 +90,21 @@
 .tcd-status-left { color: var(--text-muted); }
 .tcd-status-left.is-warn { color: color-mix(in srgb, var(--color-orange) 60%, var(--text-normal)); }
 .tcd .tcd-steps-more { padding: 4px 0 0 16px; font: var(--ap-caption); color: var(--ap-label-2); }
+
+/* Time gone between start and deadline: a quiet hairline meter, not a second big number */
+.tcd .tcd-time { display: grid; gap: 4px; margin-top: var(--ap-s2); }
+.tcd .tcd-time-bar { height: 4px; border-radius: 2px; background: var(--ap-fill-strong); overflow: hidden; }
+.tcd .tcd-time-fill { width: var(--tcd-elapsed, 0%); height: 100%; border-radius: inherit; background: var(--ap-label-2); }
+.tcd .tcd-hero.is-warn .tcd-time-fill { background: var(--ap-warn); }
+.tcd .tcd-hero.is-danger .tcd-time-fill { background: var(--ap-bad); }
+.tcd .tcd-time-label { font: var(--ap-caption); color: var(--ap-label-2); }
+
+/* Share: a quiet icon in the hero's corner */
+.tcd .tcd-hero { position: relative; }
+.tcd .tcd-share { position: absolute; top: var(--ap-s2); right: var(--ap-s2); color: var(--ap-label-2); }
+.tcd .tcd-share:hover { color: var(--ap-label); }
+.tcd .tcd-hero-title { padding-right: 28px; }
+
+/* Phone and tablet: finger-sized step rows, and room under the floating navigation bar */
+.is-mobile .tcd .tcd-step { min-height: 44px; }
+.is-phone .tcd.tcd-bases { padding-bottom: calc(var(--ap-s6) + 80px); }

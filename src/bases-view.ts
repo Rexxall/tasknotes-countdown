@@ -102,7 +102,7 @@ export class CountdownBasesView extends BasesView {
 			renderEmpty(root, 'hourglass', strings.t('emptyTitle'), strings.t('emptyText'));
 			return;
 		}
-		if (hero) renderHero(root, hero, o);
+		if (hero) renderHero(root, hero, o, () => void this.plugin.share(hero));
 		renderSections(root, sections, o);
 	}
 

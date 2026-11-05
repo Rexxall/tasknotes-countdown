@@ -1,6 +1,6 @@
 import type { App } from 'obsidian';
-import { basename, countdown, isDone, matchesTags, parseDue, type CountdownItem } from './core';
-import { isWaiting, linkTarget, nestedPaths, planFor, waitingDaysOf, type PlanOptions, type Resolver, type TaskDetail } from './plan';
+import { basename, countdown, dayDiff, isDone, matchesTags, parseDue, type CountdownItem } from './core';
+import { elapsedFraction, finishOffset, isWaiting, linkTarget, nestedPaths, planFor, waitingDaysOf, type PlanOptions, type Resolver, type TaskDetail } from './plan';
 
 /**
  * One read of TaskNotes' tasks, shared by every view. Rebuilt after TaskNotes reports a change,
@@ -61,7 +61,11 @@ export function arrange(items: CountdownItem[], index: TaskIndex, plan: PlanOpti
 	for (const item of items) {
 		const task = index.get(item.path);
 		if (!task) continue;
-		if (!item.done) item.plan = planFor(task, index.subtasks(item.path), plan);
+		if (item.done) item.finishedEarly = finishOffset(task);
+		else {
+			item.plan = planFor(task, index.subtasks(item.path), plan);
+			item.elapsed = elapsedFraction(task, plan.now);
+		}
 		if (!item.done && isWaiting(task, plan.waitingMarker)) {
 			item.waitingDays = waitingDaysOf(task, plan.now);
 			const parent = index.parent(item.path);
@@ -86,4 +90,20 @@ export function sidebarItems(index: TaskIndex, o: { now: Date; urgentDays: numbe
 		out.push({ path: t.path, title: t.title?.trim() || basename(t.path), due, done: false, countdown: countdown(due, o.now, o.urgentDays) });
 	}
 	return out.sort((a, b) => a.due.at.getTime() - b.due.at.getTime() || a.title.localeCompare(b.title));
+}
+
+/** Deadlines finished in the last few days, newest first: the moment worth a small "3 days early". */
+export function recentlyFinished(index: TaskIndex, o: { now: Date; completed: readonly string[]; tags: readonly string[]; days: number }): CountdownItem[] {
+	const out: CountdownItem[] = [];
+	for (const t of index.tasks) {
+		if (t.archived || !isDone(t.status, o.completed)) continue;
+		const done = parseDue(t.completedDate);
+		const due = parseDue(t.due);
+		if (!done || !due || dayDiff(done.at, o.now) > o.days) continue;
+		const parent = index.parent(t.path);
+		if (parent && !isDone(parent.status, o.completed)) continue; // a finished step shows inside its deadline
+		if (!matchesTags(t.tags, o.tags)) continue;
+		out.push({ path: t.path, title: t.title?.trim() || basename(t.path), due, done: true, countdown: countdown(due, o.now, 0, true), finishedEarly: finishOffset(t) });
+	}
+	return out.sort((a, b) => (parseDue(index.get(b.path)?.completedDate)?.at.getTime() ?? 0) - (parseDue(index.get(a.path)?.completedDate)?.at.getTime() ?? 0));
 }

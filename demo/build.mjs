@@ -39,13 +39,14 @@ const day = n => {
 const at = (n, hm) => `${day(n)}T${hm}:00`;
 const APP = 'Graduate application - Tokyo';
 const tasks = [
-	{ title: APP, due: `${day(5)}T17:00`, tags: ['application'], priority: 'high' },
+	{ title: APP, due: `${day(5)}T17:00`, scheduled: day(-14), tags: ['application'], priority: 'high' },
 	{ title: 'Personal statement final draft', due: day(2), project: APP, status: 'in-progress', timeEstimate: 360, entries: [[at(-2, '09:00'), at(-2, '11:00')]] },
 	{ title: 'Translate transcript', due: day(2), project: APP, timeEstimate: 180 },
 	{ title: 'Recommendation letter from advisor', due: day(3), project: APP, contexts: ['waiting'], modified: day(-6) },
 	{ title: 'Pay application fee', due: day(4), project: APP, timeEstimate: 15 },
 	{ title: 'Upload documents to the portal', due: day(5), project: APP, timeEstimate: 60 },
-	{ title: 'Order official transcript', project: APP, status: 'done' },
+	{ title: 'Order official transcript', due: day(1), project: APP, status: 'done', completed: day(-3) },
+	{ title: 'IELTS mock test', due: day(2), tags: ['exam'], status: 'done', completed: day(-1) },
 	{ title: 'Buy printer ink', due: day(6), tags: [], priority: 'low' },
 	{ title: 'Scholarship essay', due: day(8), tags: ['application'], timeEstimate: 300 },
 	{ title: 'Mock exam - statistics', due: day(9), tags: ['exam'] },
@@ -56,7 +57,7 @@ const tasks = [
 	{ title: 'Portfolio review with advisor', due: day(45), tags: ['application'] },
 	{ title: 'Visa documents ready', due: day(70), tags: ['application'] },
 	{ title: 'Send transcript request to old school', due: day(-2), tags: ['application'], priority: 'high' },
-	{ title: 'Transcript translation check', due: day(-1), tags: ['application'], status: 'done' },
+	{ title: 'Transcript translation check', due: day(-1), tags: ['application'], status: 'done', completed: day(-1) },
 	{ title: 'Old practice test', due: day(-20), tags: ['exam', 'archived'] },
 	{ title: 'Read methods paper', tags: [] },
 ];
@@ -64,6 +65,8 @@ const yamlList = (key, values) => (values.length ? [`${key}:`, ...values.map(v =
 for (const t of tasks) {
 	const fm = ['---', `title: ${JSON.stringify(t.title)}`, `status: ${t.status ?? 'open'}`, `priority: ${t.priority ?? 'normal'}`];
 	if (t.due) fm.push(`due: ${t.due}`);
+	if (t.scheduled) fm.push(`scheduled: ${t.scheduled}`);
+	if (t.completed) fm.push(`completedDate: ${t.completed}`);
 	fm.push(...yamlList('tags', ['task', ...(t.tags ?? [])]));
 	fm.push(...yamlList('contexts', t.contexts ?? []));
 	if (t.project) fm.push(...yamlList('projects', [`[[${t.project}]]`]));

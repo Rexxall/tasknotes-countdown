@@ -35,6 +35,10 @@ export interface CountdownItem {
 	waitingDays?: number | null;
 	/** Title of the deadline this task belongs to, shown in the waiting list. */
 	parentTitle?: string;
+	/** Share of the time from start to deadline already gone, 0–1. */
+	elapsed?: number | null;
+	/** For finished tasks: days before the due date (negative when late). */
+	finishedEarly?: number | null;
 }
 
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;

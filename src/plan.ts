@@ -48,6 +48,8 @@ export interface TaskDetail extends TaskLike {
 	timeEntries?: Array<{ startTime?: string; endTime?: string; duration?: number }>;
 	dateCreated?: string;
 	dateModified?: string;
+	scheduled?: string;
+	completedDate?: string;
 }
 
 /** "[[Folder/Note|alias]]", "[alias](Folder/Note.md)" or a bare name → the link target without alias or heading. */
@@ -164,3 +166,27 @@ function startOfDay(d: Date): Date {
 	return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
+
+/**
+ * How much of the time from start to deadline has gone, 0–1. Start is the scheduled date when it
+ * falls before the deadline, otherwise the creation date. Null when either end is missing.
+ */
+export function elapsedFraction(t: TaskDetail, now: Date): number | null {
+	const due = parseDue(t.due);
+	if (!due) return null;
+	const scheduled = parseDue(t.scheduled);
+	const created = parseDue(t.dateCreated);
+	const start = scheduled && scheduled.at.getTime() < due.at.getTime() ? scheduled : created;
+	if (!start) return null;
+	const end = due.hasTime ? due.at.getTime() : new Date(due.at.getFullYear(), due.at.getMonth(), due.at.getDate() + 1).getTime();
+	const span = end - start.at.getTime();
+	if (span <= 0) return null;
+	return Math.min(1, Math.max(0, (now.getTime() - start.at.getTime()) / span));
+}
+
+/** Days finished before the due date: positive is early, 0 on the day, negative late. Null without both dates. */
+export function finishOffset(t: TaskDetail): number | null {
+	const due = parseDue(t.due);
+	const done = parseDue(t.completedDate);
+	return due && done ? dayDiff(done.at, due.at) : null;
+}

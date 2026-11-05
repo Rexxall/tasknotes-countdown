@@ -1,6 +1,7 @@
 import { ItemView, Keymap, setIcon, type WorkspaceLeaf } from 'obsidian';
 import { parseTagList, pickHero } from './core';
 import { renderEmpty, renderHero, renderSections, type RenderOptions, type Section } from './render';
+import { recentlyFinished } from './model';
 import { access } from './tasknotes';
 import type TaskNotesCountdown from './main';
 
@@ -60,18 +61,20 @@ export class CountdownSidebar extends ItemView {
 		const tags = parseTagList(this.plugin.settings.tags);
 		const { main, waiting } = this.plugin.upcoming(now, tags);
 		const items = main.slice(0, this.plugin.settings.limit);
-		if (items.length === 0 && waiting.length === 0) {
+		const finished = recentlyFinished(this.plugin.index, { now, completed: this.plugin.completed(), tags, days: 3 });
+		if (items.length === 0 && waiting.length === 0 && finished.length === 0) {
 			renderEmpty(body, 'hourglass', strings.t('emptyTitle'), strings.t(tags.length ? 'emptyFiltered' : 'emptyText'));
 			return;
 		}
 		const o: RenderOptions = { strings, now, open: (path, evt) => void this.app.workspace.openLinkText(path, '', Keymap.isModEvent(evt)) };
 		const hero = pickHero(items);
-		if (hero) renderHero(body, hero, o);
+		if (hero) renderHero(body, hero, o, () => void this.plugin.share(hero));
 		const rest = items.filter(i => i !== hero);
 		const sections: Section[] = [
 			{ label: strings.band('overdue'), items: rest.filter(i => i.countdown.band === 'overdue') },
 			{ label: strings.t('waitingSection'), items: waiting },
 			{ label: strings.t(hero ? 'after' : 'sidebarTitle'), items: rest.filter(i => i.countdown.band !== 'overdue') },
+			{ label: strings.t('justFinished'), items: finished },
 		];
 		renderSections(body, sections.filter(x => x.items.length > 0), o);
 	}

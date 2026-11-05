@@ -9,6 +9,9 @@ A countdown app knows the date. TaskNotes also knows the steps, the time estimat
 - **Work left and the pace it needs.** Under the nearest deadline: steps left, hours left and how much a day that means. It turns orange (*Tight*) when the pace is more than the hours you said you can give.
 - **When each step must start.** Every open subtask gets a latest start day: its due date, minus a buffer, minus the days its remaining work needs. Steps that should start today, or should already have started, are marked.
 - **Waiting on others.** Steps marked as waiting (a context, tag or status; `waiting` by default), such as a recommendation letter, get their own list with how many days you have been waiting, so you know whom to chase.
+- **How much time is gone.** A thin bar from the start (the scheduled date, or the day the task was created) to the deadline: *71% of the time gone*.
+- **Finished early.** Deadlines you closed in the last three days stay in the sidebar for a moment: *3 days early*, *On the day*, or *2 days late*.
+- **Share as an image.** The share button on the nearest deadline (or the command *Share next deadline as image*) draws a 3:4 card in your theme's colours and copies it, ready for a chat or a post. Where the clipboard takes no images, as on phones, it is saved as an attachment instead.
 - **Visible without opening anything.** The next deadline sits in the status bar. Put a `tasknotes-countdown` block in your daily note template and every daily note shows the nearest few.
 - **Countdown view for Bases.** In any `.base`, switch the view to *Countdown*. The nearest deadline is large with its plan; subtasks fold into their deadline; the rest is grouped into Overdue, Waiting on others, Today, Next 7 days, Next 30 days and Later. A base's own *Group by* is kept.
 - **Next deadlines in the sidebar.** Open it from the hourglass in the ribbon or the command *Open next deadlines*. Limit it to tags such as `exam` and `application`; subtasks come along with their deadline.
@@ -58,14 +61,14 @@ The sidebar, status bar, note blocks and plans use the [TaskNotes runtime API](h
 
 ## Privacy
 
-No network requests. Nothing leaves your vault. The only file the plugin ever writes is `Countdown.base`, and only when you run the command.
+No network requests. Nothing leaves your vault. The plugin writes only two kinds of file, and only when you ask: `Countdown.base` when you run that command, and a share image when the clipboard cannot take it.
 
 ## Development
 
 ```bash
 npm install
 npm run build   # styles + type check + bundle
-npm test        # dates, plans, start days, waiting, labels, note block, starter base
+npm test        # dates, plans, start days, waiting, time gone, finished early, card text, labels, note block, starter base
 npm run lint    # Obsidian community directory rules, warnings fail
 ```
 
