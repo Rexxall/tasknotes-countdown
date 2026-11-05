@@ -1,0 +1,62 @@
+/* ==========================================================================
+   TaskNotes Countdown — on the glass kit. One number per screen is large;
+   everything else is a grouped list. Colour only says how close a date is.
+   ========================================================================== */
+
+.tcd.ap-view { padding: var(--ap-s4) var(--ap-s4) var(--ap-s5); }
+.tcd .tcd-head { margin-bottom: var(--ap-s3); align-items: center; }
+.tcd .tcd-open-base { color: var(--ap-label-2); }
+
+.tcd.tcd-bases { padding: var(--ap-s4) var(--ap-s4) var(--ap-s6); max-width: 680px; margin-inline: auto; }
+
+/* Next up: the soonest deadline */
+.tcd .tcd-hero { display: grid; gap: 2px; cursor: pointer; transition: transform 160ms var(--ap-ease); }
+/* Feedback on press, not on release */
+.tcd .tcd-hero:active { transform: scale(0.97); transition-duration: 100ms; }
+.tcd .tcd-row:active { background: var(--ap-fill-strong); }
+.tcd .tcd-hero:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: 2px; }
+/* Rows sit in a clipped group, so their ring goes inside. */
+.tcd .tcd-row:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: -2px; }
+.tcd .tcd-hero-title { font: var(--ap-headline); font-size: 15px; line-height: 20px; color: var(--ap-label); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tcd .tcd-hero-count { display: flex; align-items: baseline; gap: 6px; margin-top: var(--ap-s2); }
+.tcd .tcd-hero-value { font: 600 48px/52px var(--ap-font-round); letter-spacing: -0.02em; color: var(--ap-label); }
+.tcd .tcd-hero-value.is-word { font-size: 34px; line-height: 40px; }
+.tcd .tcd-hero-unit { font: var(--ap-callout); color: var(--ap-label-2); }
+.tcd .tcd-hero-date { font: var(--ap-subhead); color: var(--ap-label-2); }
+/* Colour lives in the number only; the card keeps its plain edge. */
+.tcd .tcd-hero.is-warn,
+.tcd .tcd-hero.is-danger { box-shadow: var(--ap-shadow-1); }
+/* Semantic colours are mixed toward the label colour, so text stays readable in both themes (≥3:1 large, ≥4.5:1 small). */
+.tcd {
+	--tcd-warn-text: color-mix(in srgb, var(--ap-warn) 55%, var(--ap-label));
+	--tcd-bad-text: color-mix(in srgb, var(--ap-bad) 66%, var(--ap-label));
+	--tcd-good-text: color-mix(in srgb, var(--ap-good) 62%, var(--ap-label));
+}
+.tcd .tcd-hero.is-warn .tcd-hero-value { color: color-mix(in srgb, var(--ap-warn) 78%, var(--ap-label)); }
+.tcd .tcd-hero.is-danger .tcd-hero-value { color: color-mix(in srgb, var(--ap-bad) 80%, var(--ap-label)); }
+
+/* Sections and rows */
+.tcd .tcd-section { margin-block: var(--ap-s5) 0; }
+.tcd .tcd-section-title { display: flex; align-items: baseline; gap: var(--ap-s2); }
+.tcd .tcd-count { font: var(--ap-caption); color: var(--ap-label-2); }
+.tcd .tcd-row { gap: var(--ap-s3); }
+.tcd .tcd-row-title { overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tcd .tcd-row.is-done .tcd-row-title { color: var(--ap-label-2); text-decoration: line-through; text-decoration-color: var(--ap-label-3); }
+
+/* Days-left pill: neutral, orange when close, red when late, green when done */
+.tcd .tcd-pill { flex: none; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.tcd .tcd-pill.is-warn { background: color-mix(in srgb, var(--ap-warn) 16%, transparent); color: var(--tcd-warn-text); }
+.tcd .tcd-pill.is-danger { color: var(--tcd-bad-text); }
+.tcd .tcd-pill.is-done { background: color-mix(in srgb, var(--ap-good) 14%, transparent); color: var(--tcd-good-text); }
+.tcd .tcd-pill-icon { display: inline-flex; }
+.tcd .tcd-pill-icon svg { width: 12px; height: 12px; }
+
+/* Empty and "TaskNotes is off" */
+.tcd .tcd-empty-icon { color: var(--ap-label-3); }
+.tcd .tcd-empty-icon svg { width: 32px; height: 32px; }
+.tcd .ap-empty-text { max-width: 28em; font: var(--ap-callout); color: var(--ap-label-2); }
+
+@media (prefers-reduced-motion: reduce) {
+	.tcd .tcd-hero { transition: none; }
+	.tcd .tcd-hero:active { transform: none; }
+}
