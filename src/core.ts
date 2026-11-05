@@ -1,4 +1,5 @@
 // Pure date logic. No Obsidian imports, so the tests can run in Node.
+import type { Plan } from './plan';
 
 export const MS_HOUR = 60 * 60 * 1000;
 export const MS_DAY = 24 * MS_HOUR;
@@ -28,6 +29,12 @@ export interface CountdownItem {
 	due: DueDate;
 	done: boolean;
 	countdown: Countdown;
+	/** Steps, work left and pace, when TaskNotes has subtasks or an estimate for this task. */
+	plan?: Plan | null;
+	/** Days spent waiting on someone else, for tasks marked as waiting. */
+	waitingDays?: number | null;
+	/** Title of the deadline this task belongs to, shown in the waiting list. */
+	parentTitle?: string;
 }
 
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/;
@@ -175,4 +182,28 @@ export function taskFilter(snapshot: { taskIdentificationMethod?: string; taskTa
 		return lower === 'true' || lower === 'false' ? `list(${ref}).contains(${lower})` : `list(${ref}).contains(${JSON.stringify(value)})`;
 	}
 	return `file.hasTag(${JSON.stringify(snapshot?.taskTag || 'task')})`;
+}
+
+/**
+ * ```tasknotes-countdown
+ * limit: 3
+ * tags: exam, application
+ * ```
+ * A few lines in a daily note: the nearest deadlines with their pace. Every line is optional.
+ */
+export function parseBlock(source: string): { limit: number | null; tags: string[] | null } {
+	let limit: number | null = null;
+	let tags: string[] | null = null;
+	for (const line of source.split('\n')) {
+		const m = /^\s*(\w+)\s*:\s*(.*)$/.exec(line);
+		if (!m) continue;
+		const key = m[1].toLowerCase();
+		if (key === 'limit') {
+			const n = Number(m[2]);
+			if (Number.isInteger(n) && n > 0) limit = Math.min(n, 20);
+		} else if (key === 'tags') {
+			tags = parseTagList(m[2]);
+		}
+	}
+	return { limit, tags };
 }

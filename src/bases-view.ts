@@ -1,5 +1,6 @@
 import { BasesView, Keymap, type BasesAllOptions, type BasesEntry, type BasesPropertyId, type BasesViewConfig, type QueryController } from 'obsidian';
 import { compareItems, countdown, groupByBand, isDone, parseDue, pickHero, type CountdownItem } from './core';
+import { arrange } from './model';
 import { renderEmpty, renderHero, renderSections, type Section } from './render';
 import type TaskNotesCountdown from './main';
 
@@ -18,6 +19,13 @@ export function viewOptions(plugin: TaskNotesCountdown): (config: BasesViewConfi
 			{ type: 'toggle', key: 'showDone', displayName: s.t('optDone'), default: false },
 		];
 	};
+}
+
+export function createBasesView(controller: QueryController, containerEl: HTMLElement, plugin: TaskNotesCountdown): CountdownBasesView {
+	const view = new CountdownBasesView(controller, containerEl, plugin);
+	plugin.basesViews.add(view);
+	view.register(() => plugin.basesViews.delete(view));
+	return view;
 }
 
 /** A Bases view that turns each row's date into a countdown. Reads only; never writes to the notes. */
@@ -43,6 +51,7 @@ export class CountdownBasesView extends BasesView {
 	}
 
 	onDataUpdated(): void {
+		if (!this.data) return;
 		const now = new Date();
 		this.stamp = stampOf(now);
 		const strings = this.plugin.strings();
@@ -66,7 +75,10 @@ export class CountdownBasesView extends BasesView {
 		const groups = this.data.groupedData;
 		const userGrouped = groups.some(g => g.hasKey());
 		const all = groups.flatMap(g => g.entries.map(toItem).filter(isItem));
-		const hero = pickHero([...all].sort(compareItems));
+		// Plans, waiting days and subtasks come from TaskNotes; without it the view is a plain countdown.
+		const { main, waiting } = arrange(all, this.plugin.index, this.plugin.planOptions(now));
+		const inMain = new Set(main);
+		const hero = pickHero([...main].sort(compareItems));
 		const notHero = (i: CountdownItem) => i !== hero;
 
 		let sections: Section[];
@@ -74,10 +86,13 @@ export class CountdownBasesView extends BasesView {
 			// Respect the base's own "Group by"; keep its order, sort each group by date.
 			sections = groups.map(g => ({
 				label: g.hasKey() ? (g.key?.toString() ?? '') : strings.t('groupNoDate'),
-				items: g.entries.map(e => all.find(i => i.path === e.file.path)).filter(isItem).filter(notHero).sort(compareItems),
+				items: g.entries.map(e => main.find(i => i.path === e.file.path)).filter(isItem).filter(i => inMain.has(i)).filter(notHero).sort(compareItems),
 			})).filter(s => s.items.length > 0);
+			if (waiting.length) sections.unshift({ label: strings.t('waitingSection'), items: waiting });
 		} else {
-			sections = groupByBand(all.filter(notHero).sort(compareItems)).map(g => ({ label: strings.band(g.band), items: g.items }));
+			sections = groupByBand(main.filter(notHero).sort(compareItems)).map(g => ({ label: strings.band(g.band), items: g.items }));
+			// Waiting sits right after Overdue: both need you to act today.
+			if (waiting.length) sections.splice(sections[0]?.label === strings.band('overdue') ? 1 : 0, 0, { label: strings.t('waitingSection'), items: waiting });
 		}
 
 		const root = this.root;

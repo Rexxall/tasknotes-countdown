@@ -1,14 +1,20 @@
 # TaskNotes Countdown
 
-Days left to your [TaskNotes](https://github.com/callumalpass/tasknotes) due dates: exams, application deadlines, anything with a `due` date.
+Days left to your [TaskNotes](https://github.com/callumalpass/tasknotes) due dates, and whether you can still make them: exams, applications, anything with a `due` date.
 
 ![Countdown view and sidebar card, light](docs/screenshots/countdown-light.png)
 
-- **Countdown view for Bases.** In any `.base`, switch the view to *Countdown*. The nearest deadline is shown large; the rest is grouped into Overdue, Today, Next 7 days, Next 30 days and Later. If the base has its own *Group by*, those groups are kept.
-- **Next deadlines in the sidebar.** Open it from the hourglass in the ribbon or the command *Open next deadlines*. Limit it to tags such as `exam` and `application` in the settings.
-- **Read-only.** The plugin never changes a task. Clicking a row opens the task note; Cmd/Ctrl-click opens it in a new tab.
-- **Follows TaskNotes.** Completed statuses, the archive tag, the task tag or property, and renamed `due`/`status` fields come from your TaskNotes settings.
-- **Light at startup.** Nothing is read while Obsidian starts. Tasks are read after TaskNotes reports its cache is ready, then only when a task changes.
+A countdown app knows the date. TaskNotes also knows the steps, the time estimates and the time you have already tracked, so this plugin answers the question that matters before an exam or an application: **can I still make it?**
+
+- **Work left and the pace it needs.** Under the nearest deadline: steps left, hours left and how much a day that means. It turns orange (*Tight*) when the pace is more than the hours you said you can give.
+- **When each step must start.** Every open subtask gets a latest start day: its due date, minus a buffer, minus the days its remaining work needs. Steps that should start today, or should already have started, are marked.
+- **Waiting on others.** Steps marked as waiting (a context, tag or status; `waiting` by default), such as a recommendation letter, get their own list with how many days you have been waiting, so you know whom to chase.
+- **Visible without opening anything.** The next deadline sits in the status bar. Put a `tasknotes-countdown` block in your daily note template and every daily note shows the nearest few.
+- **Countdown view for Bases.** In any `.base`, switch the view to *Countdown*. The nearest deadline is large with its plan; subtasks fold into their deadline; the rest is grouped into Overdue, Waiting on others, Today, Next 7 days, Next 30 days and Later. A base's own *Group by* is kept.
+- **Next deadlines in the sidebar.** Open it from the hourglass in the ribbon or the command *Open next deadlines*. Limit it to tags such as `exam` and `application`; subtasks come along with their deadline.
+- **Read-only, and nothing to lose.** The plugin never changes a task and stores nothing of its own beyond settings. Clicking opens the task note.
+- **Follows TaskNotes.** Completed statuses, the default status, the archive tag, the task tag or property, and renamed fields come from your TaskNotes settings.
+- **Light at startup.** Nothing is read while Obsidian starts. Tasks are read once after TaskNotes reports its cache is ready, then once per change, and every view draws from that one read.
 - English, Chinese and Japanese, following Obsidian's language.
 
 ![Dark](docs/screenshots/countdown-dark.png)
@@ -19,6 +25,21 @@ Days left to your [TaskNotes](https://github.com/callumalpass/tasknotes) due dat
 2. Run **Create or open countdown base**. It writes `Countdown.base` into the folder TaskNotes keeps its views in (by default `TaskNotes/Views`) and opens it. An existing file is opened, never overwritten.
 3. Or add a *Countdown* view to any base you already have. View options: date property, status property, how many days count as close, and whether to show completed tasks.
 
+## In a daily note
+
+````markdown
+```tasknotes-countdown
+limit: 3
+tags: exam, application
+```
+````
+
+Both lines are optional; without them the block uses the sidebar's tags and shows three deadlines.
+
+## How subtasks are found
+
+A task is a step of a deadline when its `projects` link to that deadline's note, which is how TaskNotes records subtasks. Give steps a time estimate in TaskNotes to get hours and start days; without estimates you still see the steps and the countdown.
+
 ## Settings
 
 | Setting | Default | |
@@ -26,10 +47,14 @@ Days left to your [TaskNotes](https://github.com/callumalpass/tasknotes) due dat
 | Only these tags | empty (every task) | Sidebar only. Comma-separated; nested tags match (`exam` matches `exam/toefl`). |
 | Tasks in the sidebar | 6 | |
 | Highlight within days | 3 | Closer deadlines turn orange. Bases views have their own option. |
+| Show the next deadline in the status bar | on | Click it to open the sidebar. |
+| Hours a day for deadlines | 3 | Used for the pace and the start days. |
+| Buffer days | 1 | Each step is planned to finish this many days early. |
+| Waiting marker | `waiting` | A context, tag or status that means you are waiting on someone. |
 
 ## How it reads TaskNotes
 
-The sidebar uses the [TaskNotes runtime API](https://github.com/callumalpass/tasknotes/blob/main/docs/javascript-api.md) (`apiVersion` 1): `tasks.list`, `catalog.statuses`, `settings.snapshot`, and the task and lifecycle events. It checks the version and capabilities first and shows a notice instead of failing when TaskNotes is off or too old. The Bases view reads note properties through Bases itself, so it keeps working even while TaskNotes is disabled.
+The sidebar, status bar, note blocks and plans use the [TaskNotes runtime API](https://github.com/callumalpass/tasknotes/blob/main/docs/javascript-api.md) (`apiVersion` 1): `tasks.list` (one call per change, shared by every view), `catalog.statuses`, `settings.snapshot`, and the task and lifecycle events. Subtask links are resolved with Obsidian's link resolver. It checks the version and capabilities first and shows a notice instead of failing when TaskNotes is off or too old. The Bases view reads note properties through Bases itself, so its countdown keeps working while TaskNotes is disabled; plans and waiting lists need TaskNotes.
 
 ## Privacy
 
@@ -40,7 +65,7 @@ No network requests. Nothing leaves your vault. The only file the plugin ever wr
 ```bash
 npm install
 npm run build   # styles + type check + bundle
-npm test        # date logic, labels, starter base
+npm test        # dates, plans, start days, waiting, labels, note block, starter base
 npm run lint    # Obsidian community directory rules, warnings fail
 ```
 

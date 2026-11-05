@@ -10,11 +10,11 @@
 .tcd.tcd-bases { padding: var(--ap-s4) var(--ap-s4) var(--ap-s6); max-width: 680px; margin-inline: auto; }
 
 /* Next up: the soonest deadline */
-.tcd .tcd-hero { display: grid; gap: 2px; cursor: pointer; transition: transform 160ms var(--ap-ease); }
+.tcd .tcd-hero-main { display: grid; gap: 2px; cursor: pointer; border-radius: 10px; transition: opacity 160ms var(--ap-ease); }
 /* Feedback on press, not on release */
-.tcd .tcd-hero:active { transform: scale(0.97); transition-duration: 100ms; }
+.tcd .tcd-hero-main:active { opacity: 0.6; transition-duration: 0s; }
 .tcd .tcd-row:active { background: var(--ap-fill-strong); }
-.tcd .tcd-hero:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: 2px; }
+.tcd .tcd-hero-main:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: 4px; }
 /* Rows sit in a clipped group, so their ring goes inside. */
 .tcd .tcd-row:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: -2px; }
 .tcd .tcd-hero-title { font: var(--ap-headline); font-size: 15px; line-height: 20px; color: var(--ap-label); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -57,6 +57,36 @@
 .tcd .ap-empty-text { max-width: 28em; font: var(--ap-callout); color: var(--ap-label-2); }
 
 @media (prefers-reduced-motion: reduce) {
-	.tcd .tcd-hero { transition: none; }
-	.tcd .tcd-hero:active { transform: none; }
+	.tcd .tcd-hero-main { transition: none; }
 }
+
+/* Can I make it? — pace under the big number, then the open steps */
+.tcd .tcd-pace { margin-top: var(--ap-s3); padding-top: var(--ap-s3); box-shadow: inset 0 0.5px 0 var(--ap-sep); font: var(--ap-callout); color: var(--ap-label-2); display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; }
+.tcd .tcd-tight { font-weight: 600; color: var(--tcd-warn-text); }
+.tcd .tcd-steps { display: grid; margin-top: var(--ap-s2); }
+.tcd .tcd-step { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; align-items: center; gap: var(--ap-s2); min-height: 32px; padding: 4px 6px; margin-inline: -6px; border-radius: 8px; cursor: pointer; }
+.tcd .tcd-step:hover { background: var(--ap-fill); }
+.tcd .tcd-step:active { background: var(--ap-fill-strong); }
+.tcd .tcd-step:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: -2px; }
+.tcd .tcd-step-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ap-label-3); }
+.tcd .tcd-step-title { font: var(--ap-subhead); color: var(--ap-label); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tcd .tcd-step-when { font: var(--ap-caption); color: var(--ap-label-2); white-space: nowrap; }
+.tcd .tcd-step.is-started .tcd-step-dot { background: var(--ap-accent); box-shadow: none; }
+.tcd .tcd-step.is-waiting .tcd-step-dot { box-shadow: inset 0 0 0 1.5px var(--ap-accent); }
+.tcd .tcd-step.is-start-now .tcd-step-dot { background: var(--ap-warn); box-shadow: none; }
+.tcd .tcd-step.is-start-now .tcd-step-when { color: var(--tcd-warn-text); font-weight: 600; }
+.tcd .tcd-step.is-late .tcd-step-dot { background: var(--ap-bad); box-shadow: none; }
+.tcd .tcd-step.is-late .tcd-step-when { color: var(--tcd-bad-text); font-weight: 600; }
+
+/* Note block (```tasknotes-countdown```): just the rows */
+.tcd.tcd-block { margin: var(--ap-s2) 0; }
+.tcd.tcd-block .tcd-section { margin: 0; }
+.tcd .tcd-block-empty { font: var(--ap-callout); color: var(--ap-label-2); }
+
+/* Status bar */
+.tcd-status { gap: 6px; font-variant-numeric: tabular-nums; }
+.tcd-status.is-hidden { display: none; }
+.tcd-status-title { max-width: 16em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tcd-status-left { color: var(--text-muted); }
+.tcd-status-left.is-warn { color: color-mix(in srgb, var(--color-orange) 60%, var(--text-normal)); }
+.tcd .tcd-steps-more { padding: 4px 0 0 16px; font: var(--ap-caption); color: var(--ap-label-2); }

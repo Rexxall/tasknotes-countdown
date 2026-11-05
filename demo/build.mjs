@@ -35,29 +35,45 @@ const day = n => {
 	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-// Made-up tasks: exams, applications and a few ordinary ones, in English, Chinese and Japanese.
+// Made-up tasks: one application with its steps, exams, a few ordinary ones, in English, Chinese and Japanese.
+const at = (n, hm) => `${day(n)}T${hm}:00`;
+const APP = 'Graduate application - Tokyo';
 const tasks = [
-	{ title: 'Mock exam - statistics', due: day(0), tags: ['exam'], priority: 'high' },
-	{ title: 'Scholarship essay final draft', due: day(1), tags: ['application'], priority: 'high' },
-	{ title: 'Buy printer ink', due: day(2), tags: [], priority: 'low' },
-	{ title: '提交研究计划书', due: day(3), tags: ['application'], priority: 'high' },
-	{ title: 'Graduate portal closes', due: `${day(5)}T17:00`, tags: ['application'], priority: 'high' },
-	{ title: 'TOEFL iBT', due: day(12), tags: ['exam'], priority: 'normal' },
-	{ title: '日本語能力試験 N1', due: day(30), tags: ['exam'], priority: 'normal' },
-	{ title: 'Portfolio review with advisor', due: day(45), tags: ['application'], priority: 'normal' },
-	{ title: 'Visa documents ready', due: day(70), tags: ['application'], priority: 'normal' },
-	{ title: 'Ask for recommendation letter', due: day(-2), tags: ['application'], priority: 'high' },
-	{ title: 'Transcript translation', due: day(-1), tags: ['application'], status: 'done' },
+	{ title: APP, due: `${day(5)}T17:00`, tags: ['application'], priority: 'high' },
+	{ title: 'Personal statement final draft', due: day(2), project: APP, status: 'in-progress', timeEstimate: 360, entries: [[at(-2, '09:00'), at(-2, '11:00')]] },
+	{ title: 'Translate transcript', due: day(2), project: APP, timeEstimate: 180 },
+	{ title: 'Recommendation letter from advisor', due: day(3), project: APP, contexts: ['waiting'], modified: day(-6) },
+	{ title: 'Pay application fee', due: day(4), project: APP, timeEstimate: 15 },
+	{ title: 'Upload documents to the portal', due: day(5), project: APP, timeEstimate: 60 },
+	{ title: 'Order official transcript', project: APP, status: 'done' },
+	{ title: 'Buy printer ink', due: day(6), tags: [], priority: 'low' },
+	{ title: 'Scholarship essay', due: day(8), tags: ['application'], timeEstimate: 300 },
+	{ title: 'Mock exam - statistics', due: day(9), tags: ['exam'] },
+	{ title: 'TOEFL iBT', due: day(12), tags: ['exam'], timeEstimate: 900, entries: [[at(-5, '19:00'), at(-5, '21:00')], [at(-3, '19:00'), at(-3, '22:00')]] },
+	{ title: '提交研究计划书', due: day(16), tags: ['application'], timeEstimate: 600 },
+	{ title: 'Score report sent to university', due: day(20), tags: ['application'], contexts: ['waiting'], modified: day(-10) },
+	{ title: '日本語能力試験 N1', due: day(30), tags: ['exam'] },
+	{ title: 'Portfolio review with advisor', due: day(45), tags: ['application'] },
+	{ title: 'Visa documents ready', due: day(70), tags: ['application'] },
+	{ title: 'Send transcript request to old school', due: day(-2), tags: ['application'], priority: 'high' },
+	{ title: 'Transcript translation check', due: day(-1), tags: ['application'], status: 'done' },
 	{ title: 'Old practice test', due: day(-20), tags: ['exam', 'archived'] },
 	{ title: 'Read methods paper', tags: [] },
 ];
+const yamlList = (key, values) => (values.length ? [`${key}:`, ...values.map(v => `  - ${JSON.stringify(v)}`)] : []);
 for (const t of tasks) {
 	const fm = ['---', `title: ${JSON.stringify(t.title)}`, `status: ${t.status ?? 'open'}`, `priority: ${t.priority ?? 'normal'}`];
 	if (t.due) fm.push(`due: ${t.due}`);
-	fm.push('tags:', ...['task', ...t.tags].map(tag => `  - ${tag}`), `dateCreated: ${day(-30)}T09:00:00.000+00:00`, '---', '');
+	fm.push(...yamlList('tags', ['task', ...(t.tags ?? [])]));
+	fm.push(...yamlList('contexts', t.contexts ?? []));
+	if (t.project) fm.push(...yamlList('projects', [`[[${t.project}]]`]));
+	if (t.timeEstimate) fm.push(`timeEstimate: ${t.timeEstimate}`);
+	if (t.entries) fm.push('timeEntries:', ...t.entries.flatMap(([a, b]) => [`  - startTime: ${a}`, `    endTime: ${b}`]));
+	fm.push(`dateCreated: ${day(-30)}T09:00:00`, `dateModified: ${(t.modified ?? day(-1))}T09:00:00`, '---', '');
 	const safe = t.title.replace(/[\\/:*?"<>|]/g, '-');
 	write(`TaskNotes/Tasks/${safe}.md`, fm.join('\n') + 'Made-up demo task.\n');
 }
+write(`Daily/${day(0)}.md`, `## Deadlines\n\n\`\`\`tasknotes-countdown\nlimit: 3\n\`\`\`\n\n## Notes\n\n- Made-up daily note.\n`);
 
 write('TaskNotes/Views/Countdown.base', [
 	'filters:', '  and:', '    - "file.hasTag(\\"task\\")"', '    - "!note[\\"due\\"].isEmpty()"',
@@ -70,8 +86,8 @@ write('Home.md', `# TaskNotes Countdown demo
 Everything here is made up. Dates move with today each time the vault is reset.
 
 1. Open **TaskNotes/Views/Countdown.base**. The nearest deadline is large; the rest is grouped by how close it is.
-2. Open the sidebar card with the hourglass in the ribbon. It shows only tasks tagged \`exam\` or \`application\` (Settings → TaskNotes Countdown).
-3. Change a task's due date or mark it done in TaskNotes. Both views update on their own.
+2. Open the sidebar card with the hourglass in the ribbon. It shows only tasks tagged \`exam\` or \`application\` (Settings → TaskNotes Countdown). The application shows its steps, the hours left and the pace a day; the recommendation letter sits under *Waiting on others*.\n3. Today's daily note (in \`Daily/\`) has a \`tasknotes-countdown\` block. The status bar shows the next deadline.
+4. Change a task's due date or mark it done in TaskNotes. Both views update on their own.
 `);
 
 // Obsidian config: Bases on, the two plugins on, nothing else.
@@ -92,7 +108,7 @@ for (const f of ['main.js', 'manifest.json', 'styles.css']) {
 	cpSync(path.join(repo, 'demo/.cache/tasknotes', f), path.join(vault, cfg, 'plugins/tasknotes', f));
 	cpSync(path.join(repo, f), path.join(vault, cfg, 'plugins/tasknotes-countdown', f));
 }
-json(`${cfg}/plugins/tasknotes-countdown/data.json`, { tags: 'exam, application', limit: 6, urgentDays: 3 });
+json(`${cfg}/plugins/tasknotes-countdown/data.json`, { tags: 'exam, application', limit: 6, urgentDays: 3, hoursPerDay: 3, bufferDays: 1, waitingMarker: 'waiting', statusBar: true });
 json(`${cfg}/workspace.json`, {
 	main: { id: 'm0', type: 'split', direction: 'vertical', children: [{ id: 'm1', type: 'tabs', children: [
 		{ id: 'm2', type: 'leaf', state: { type: 'markdown', state: { file: 'Home.md', mode: 'preview' } } }] }] },

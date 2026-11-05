@@ -1,15 +1,14 @@
 import { ItemView, Keymap, setIcon, type WorkspaceLeaf } from 'obsidian';
-import { parseTagList, pickHero, upcoming } from './core';
-import { renderEmpty, renderHero, renderSections, type RenderOptions } from './render';
-import { access, completedStatuses } from './tasknotes';
+import { parseTagList, pickHero } from './core';
+import { renderEmpty, renderHero, renderSections, type RenderOptions, type Section } from './render';
+import { access } from './tasknotes';
 import type TaskNotesCountdown from './main';
 
 export const SIDEBAR_TYPE = 'tasknotes-countdown-sidebar';
 
-/** "Next deadlines": the soonest open TaskNotes tasks with a due date. Read-only. */
+/** "Next deadlines": the soonest open TaskNotes deadlines, how much is left, who you are waiting on. Read-only. */
 export class CountdownSidebar extends ItemView {
-	private body!: HTMLElement;
-	private seq = 0;
+	private body: HTMLElement | null = null;
 
 	constructor(leaf: WorkspaceLeaf, private plugin: TaskNotesCountdown) {
 		super(leaf);
@@ -37,46 +36,43 @@ export class CountdownSidebar extends ItemView {
 		setIcon(open, 'table-2');
 		open.addEventListener('click', () => void this.plugin.openCountdownBase());
 		this.body = root.createDiv({ cls: 'tcd-body' });
-		await this.refresh();
+		if (this.plugin.index.loaded) this.render();
+		else await this.plugin.reload();
 	}
 
 	async onClose(): Promise<void> {
+		this.body = null;
 		this.contentEl.empty();
 	}
 
-	async refresh(): Promise<void> {
-		if (!this.body) return;
-		const seq = ++this.seq;
+	render(): void {
+		const body = this.body;
+		if (!body) return;
 		const strings = this.plugin.strings();
+		body.empty();
 		const found = access(this.app);
 		if (found.state !== 'ready') {
-			this.body.empty();
-			renderEmpty(this.body, 'plug-zap', strings.t(found.state === 'off' ? 'offTitle' : 'oldTitle'), strings.t(found.state === 'off' ? 'offText' : 'oldText'));
+			renderEmpty(body, 'plug-zap', strings.t(found.state === 'off' ? 'offTitle' : 'oldTitle'), strings.t(found.state === 'off' ? 'offText' : 'oldText'));
 			return;
 		}
-		this.plugin.connect(found.api);
-		const tasks = await found.api.tasks.list();
-		if (seq !== this.seq) return; // a newer refresh started while this one waited
-		const s = this.plugin.settings;
-		const tags = parseTagList(s.tags);
+		if (!this.plugin.index.loaded) return;
 		const now = new Date();
-		const items = upcoming(tasks, { now, urgentDays: s.urgentDays, completed: completedStatuses(found.api), tags, limit: s.limit });
-
-		this.body.empty();
-		if (items.length === 0) {
-			renderEmpty(this.body, 'hourglass', strings.t('emptyTitle'), strings.t(tags.length ? 'emptyFiltered' : 'emptyText'));
+		const tags = parseTagList(this.plugin.settings.tags);
+		const { main, waiting } = this.plugin.upcoming(now, tags);
+		const items = main.slice(0, this.plugin.settings.limit);
+		if (items.length === 0 && waiting.length === 0) {
+			renderEmpty(body, 'hourglass', strings.t('emptyTitle'), strings.t(tags.length ? 'emptyFiltered' : 'emptyText'));
 			return;
 		}
 		const o: RenderOptions = { strings, now, open: (path, evt) => void this.app.workspace.openLinkText(path, '', Keymap.isModEvent(evt)) };
 		const hero = pickHero(items);
-		if (hero) renderHero(this.body, hero, o);
+		if (hero) renderHero(body, hero, o);
 		const rest = items.filter(i => i !== hero);
-		// Overdue rows keep their own heading; the rest is one list, soonest first.
-		const late = rest.filter(i => i.countdown.band === 'overdue');
-		const next = rest.filter(i => i.countdown.band !== 'overdue');
-		renderSections(this.body, [
-			{ label: strings.band('overdue'), items: late },
-			{ label: strings.t(hero ? 'after' : 'sidebarTitle'), items: next },
-		].filter(x => x.items.length > 0), o);
+		const sections: Section[] = [
+			{ label: strings.band('overdue'), items: rest.filter(i => i.countdown.band === 'overdue') },
+			{ label: strings.t('waitingSection'), items: waiting },
+			{ label: strings.t(hero ? 'after' : 'sidebarTitle'), items: rest.filter(i => i.countdown.band !== 'overdue') },
+		];
+		renderSections(body, sections.filter(x => x.items.length > 0), o);
 	}
 }

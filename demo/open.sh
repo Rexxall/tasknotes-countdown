@@ -13,15 +13,25 @@ BIN=/Applications/Obsidian.app/Contents/MacOS/Obsidian
 LANG_CODE=""
 running() { pgrep -f -- "--user-data-dir=$DATA" >/dev/null 2>&1; }
 case "${1:-}" in
-  --quit) pkill -f -- "^$BIN --user-data-dir=$DATA" || true; exit 0 ;;
+  --quit)
+    pkill -f -- "^$BIN --user-data-dir=$DATA" || true
+    # Wait until it is really gone, so an open right after a reset starts a fresh instance.
+    for i in {1..40}; do running || exit 0; sleep 0.25; done
+    exit 0 ;;
   --lang) LANG_CODE=${2:?language code, e.g. en}; shift 2 ;;
 esac
 [[ -f "$VAULT/.tnc-demo" ]] || { echo "No demo vault at $VAULT. Run demo/reset.sh first."; exit 1; }
+page_up() { curl -s "http://127.0.0.1:$PORT/json" | grep -q '"type": "page"'; }
 if ! running; then
   mkdir -p "$DATA"
   print -r -- "{\"vaults\":{\"tncdemo000000001\":{\"path\":\"$VAULT\",\"ts\":$(date +%s)000,\"open\":true}}}" > "$DATA/obsidian.json"
-  nohup "$BIN" --user-data-dir="$DATA" --remote-debugging-port="$PORT" >"$DATA/launch.log" 2>&1 &!
-  for i in {1..40}; do curl -s "http://127.0.0.1:$PORT/json" | grep -q '"type": "page"' && break; sleep 0.5; done
+  # Right after a quit Obsidian can refuse a new instance for a moment, so try twice.
+  for attempt in 1 2; do
+    nohup "$BIN" --user-data-dir="$DATA" --remote-debugging-port="$PORT" >"$DATA/launch.log" 2>&1 &!
+    for i in {1..40}; do page_up && break; sleep 0.5; done
+    page_up && break
+    sleep 2
+  done
   sleep 3
 fi
 ready() {

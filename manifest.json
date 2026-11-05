@@ -1,9 +1,9 @@
 {
 	"id": "tasknotes-countdown",
 	"name": "TaskNotes Countdown",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"minAppVersion": "1.12.2",
-	"description": "Count down the days to TaskNotes due dates, such as exams and application deadlines, in a Bases view and a sidebar card.",
+	"description": "Count down to TaskNotes due dates and see whether you can still make it, with steps left, the pace you need, when to start, and who you are waiting on.",
 	"author": "Rexxall",
 	"authorUrl": "https://github.com/Rexxall",
 	"isDesktopOnly": false

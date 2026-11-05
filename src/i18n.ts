@@ -1,4 +1,5 @@
 import type { Band, Countdown } from './core';
+import type { Plan, Step } from './plan';
 
 export type Lang = 'en' | 'zh' | 'ja';
 
@@ -38,7 +39,20 @@ const T = {
 	setLimit: { en: 'Tasks in the sidebar', zh: '侧栏显示几件', ja: 'サイドバーの件数' },
 	setUrgent: { en: 'Highlight within days', zh: '几天内标为紧急', ja: '何日前から強調' },
 	setUrgentDesc: { en: 'Deadlines this close turn orange. Bases views have their own setting.', zh: '离截止这么近的显示为橙色。Bases 视图在视图选项里单独设置。', ja: 'この日数以内はオレンジで表示。Bases ビューはビューの設定で個別に変えられます。' },
+	hoursRange: { en: 'Enter a number of hours from 0.5 to 16.', zh: '请输入 0.5 到 16 之间的小时数。', ja: '0.5〜16 の時間数を入力してください。' },
 	wholeNumber: { en: 'Enter a whole number from 0 to 60.', zh: '请输入 0 到 60 的整数。', ja: '0〜60 の整数を入力してください。' },
+	waitingSection: { en: 'Waiting on others', zh: '等别人', ja: '他の人待ち' },
+	tight: { en: 'Tight', zh: '很紧', ja: 'きつい' },
+	statusBarLabel: { en: 'Next deadline. Click to open the list.', zh: '最近的截止日。点击打开列表。', ja: '直近の締め切り。クリックで一覧を開く。' },
+	setHours: { en: 'Hours a day for deadlines', zh: '每天能投入几小时', ja: '1日に使える時間' },
+	setHoursDesc: { en: 'Used to say whether the work left fits in the days left, and when each step should start.', zh: '用来判断剩下的活能不能在剩下的天数里干完，以及每一步最晚哪天开始。', ja: '残りの作業が残りの日数に収まるか、各ステップをいつまでに始めるかの計算に使います。' },
+	setBuffer: { en: 'Buffer days', zh: '留出缓冲天数', ja: '余裕を持たせる日数' },
+	setBufferDesc: { en: 'Each step is planned to finish this many days before its due date.', zh: '每一步都按提前这么多天完成来排。', ja: '各ステップを締め切りのこの日数前に終える前提で計算します。' },
+	setWaiting: { en: 'Waiting marker', zh: '“等别人”标记', ja: '「待ち」の目印' },
+	setWaitingDesc: { en: 'A context, tag or status that means you are waiting on someone, such as a recommender.', zh: '表示在等别人（比如推荐人）的上下文、标签或状态。', ja: '推薦者など、他の人を待っていることを表すコンテキスト、タグ、ステータス。' },
+	setStatusBar: { en: 'Show the next deadline in the status bar', zh: '在状态栏显示最近的截止日', ja: 'ステータスバーに直近の締め切りを表示' },
+	settingsCard: { en: 'Sidebar and status bar', zh: '侧栏和状态栏', ja: 'サイドバーとステータスバー' },
+	settingsPlan: { en: 'Planning', zh: '排期', ja: '計画' },
 	groupNoDate: { en: 'No date', zh: '无日期', ja: '日付なし' },
 } satisfies Record<string, Text>;
 
@@ -82,6 +96,74 @@ export class Strings {
 		if (c.days === 0 && c.hours !== null) return { value: String(c.hours), unit: lang === 'zh' ? '小时' : lang === 'ja' ? '時間' : c.hours === 1 ? 'hour left' : 'hours left' };
 		if (c.days === 0) return { value: this.t('today'), unit: '' };
 		return { value: String(c.days), unit: lang === 'zh' ? '天' : lang === 'ja' ? '日' : c.days === 1 ? 'day left' : 'days left' };
+	}
+
+	/** "50 min", "4.5 h" / "50 分钟", "4.5 小时" / "50分", "4.5時間". */
+	duration(minutes: number): string {
+		const { lang } = this;
+		if (minutes < 60) return lang === 'zh' ? `${minutes} 分钟` : lang === 'ja' ? `${minutes}分` : `${minutes} min`;
+		const h = Math.round((minutes / 60) * 2) / 2;
+		return lang === 'zh' ? `${h} 小时` : lang === 'ja' ? `${h}時間` : `${h} h`;
+	}
+
+	/** "3 of 5 steps left · about 4 h · 50 min a day" — only the parts the data supports. */
+	pace(p: Plan): string[] {
+		const { lang } = this;
+		const parts: string[] = [];
+		if (p.openSteps + p.doneSteps > 0) {
+			const total = p.openSteps + p.doneSteps;
+			parts.push(lang === 'zh' ? `还剩 ${p.openSteps} 步，共 ${total} 步` : lang === 'ja' ? `残り${p.openSteps}ステップ（全${total}）` : `${p.openSteps} of ${total} ${total === 1 ? 'step' : 'steps'} left`);
+		}
+		if (p.remainingMinutes > 0) {
+			const d = this.duration(p.remainingMinutes);
+			parts.push(lang === 'zh' ? `约 ${d}` : lang === 'ja' ? `約${d}` : `about ${d}`);
+			const day = this.duration(p.minutesPerDay);
+			parts.push(lang === 'zh' ? `每天 ${day}` : lang === 'ja' ? `1日${day}` : `${day} a day`);
+		}
+		return parts;
+	}
+
+	/** Short form for a row: "3 steps left" / "还剩 3 步" / "残り3ステップ". */
+	stepsShort(p: Plan): string {
+		const { lang } = this;
+		if (p.openSteps === 0) return '';
+		return lang === 'zh' ? `还剩 ${p.openSteps} 步` : lang === 'ja' ? `残り${p.openSteps}ステップ` : `${p.openSteps} ${p.openSteps === 1 ? 'step' : 'steps'} left`;
+	}
+
+	more(n: number): string {
+		return this.lang === 'zh' ? `还有 ${n} 步` : this.lang === 'ja' ? `ほか${n}ステップ` : `${n} more ${n === 1 ? 'step' : 'steps'}`;
+	}
+
+	waiting(days: number | null | undefined): string {
+		const { lang } = this;
+		if (days === null || days === undefined) return this.t('waitingSection');
+		return lang === 'zh' ? `已等 ${days} 天` : lang === 'ja' ? `${days}日待ち` : `Waiting ${days} ${days === 1 ? 'day' : 'days'}`;
+	}
+
+	step(step: Step, now: Date): string {
+		const { lang } = this;
+		switch (step.state) {
+			case 'done': return this.t('done');
+			case 'waiting': return this.waiting(step.waitingDays);
+			case 'started': return lang === 'zh' ? '进行中' : lang === 'ja' ? '進行中' : 'In progress';
+			case 'late': return lang === 'zh' ? '该开始了' : lang === 'ja' ? '開始が遅れています' : 'Start overdue';
+			case 'start-now': return lang === 'zh' ? '今天开始' : lang === 'ja' ? '今日開始' : 'Start today';
+			case 'later': {
+				if (!step.startBy) return '';
+				const raw = this.shortDate(step.startBy, now);
+				const d = lang === 'en' && raw === this.t('tomorrow') ? 'tomorrow' : raw;
+				return lang === 'zh' ? `最晚${d}开始` : lang === 'ja' ? `${d}までに開始` : `Start by ${d}`;
+			}
+		}
+	}
+
+	/** "Mon" within a week, otherwise "Nov 20" / "周一" / "11月20日" / "月曜" / "11月20日". */
+	shortDate(at: Date, now: Date): string {
+		const locale = this.lang === 'zh' ? 'zh-CN' : this.lang === 'ja' ? 'ja-JP' : 'en-US';
+		const days = Math.round((Date.UTC(at.getFullYear(), at.getMonth(), at.getDate()) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+		if (days === 1) return this.t('tomorrow');
+		const opts: Intl.DateTimeFormatOptions = days > 1 && days < 7 ? { weekday: this.lang === 'zh' ? 'short' : 'long' } : { month: 'short', day: 'numeric' };
+		return new Intl.DateTimeFormat(locale, opts).format(at);
 	}
 
 	/** "Fri, Nov 20" / "11月20日 周五" / "11月20日(金)", with the time when there is one. */
