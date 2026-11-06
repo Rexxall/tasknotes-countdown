@@ -121,7 +121,7 @@
 .ap-row-desc { font: var(--ap-subhead); color: var(--ap-label-2); }
 .ap-row-value { font: var(--ap-body); color: var(--ap-label-2); }
 .ap-row.is-link { cursor: pointer; }
-.ap-row.is-link:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-row.is-link:hover { background: var(--ap-fill); } }
 .ap-chevron { width: 7px; height: 12px; color: var(--ap-label-3); }
 
 /* Obsidian's native settings as grouped lists: add "ap ap-settings" to the tab's containerEl.
@@ -212,17 +212,17 @@
   background: var(--ap-fill); color: var(--ap-label); white-space: nowrap;
   transition: background var(--ap-fast) var(--ap-ease), transform var(--ap-fast) var(--ap-ease);
 }
-.ap-btn:hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap-btn:hover { background: var(--ap-fill-strong); } }
 .ap-btn:active { transform: scale(0.96); }
 .ap-btn:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: 2px; }
 .ap-btn.is-primary { background: var(--ap-accent); color: var(--ap-on-accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25); }
-.ap-btn.is-primary:hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); }
+@media (hover: hover) { .ap-btn.is-primary:hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); } }
 .ap-btn.is-tinted { background: var(--ap-accent-tint); color: var(--ap-accent); }
 .ap-btn.is-plain { background: none; color: var(--ap-accent); padding-inline: 6px; }
-.ap-btn.is-plain:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-btn.is-plain:hover { background: var(--ap-fill); } }
 .ap-btn.is-danger { color: var(--ap-bad); }
 .ap-btn.is-outline { background: var(--ap-page); box-shadow: var(--ap-hair); }
-.ap-btn.is-outline:hover { background: var(--ap-group); }
+@media (hover: hover) { .ap-btn.is-outline:hover { background: var(--ap-group); } }
 .ap-btn.is-large { font: 600 14px/20px var(--ap-font); padding: 10px 20px; }
 .ap-btn:disabled, .ap-btn[aria-disabled="true"] { opacity: 0.45; cursor: default; transform: none; }
 
@@ -243,7 +243,7 @@
   padding: 8px var(--ap-s3); border-radius: var(--ap-r-field); cursor: pointer;
   transition: background var(--ap-fast) var(--ap-ease);
 }
-.ap-item:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-item:hover { background: var(--ap-fill); } }
 .ap-item[aria-selected="true"], .ap-item.is-selected { background: var(--ap-accent); color: var(--ap-on-accent); }
 .ap-item[aria-selected="true"] .ap-item-sub, .ap-item.is-selected .ap-item-sub { color: color-mix(in srgb, var(--ap-on-accent) 78%, transparent); }
 .ap-item-title { font: var(--ap-body); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -421,10 +421,10 @@
   font: 500 13px/18px var(--ap-font); padding: 6px 14px; height: auto;
   transition: background var(--ap-fast) var(--ap-ease), transform var(--ap-fast) var(--ap-ease);
 }
-.ap :where(button:not(.clickable-icon)):hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap :where(button:not(.clickable-icon)):hover { background: var(--ap-fill-strong); } }
 .ap :where(button:not(.clickable-icon)):active { transform: scale(0.97); }
 .ap :where(button.mod-cta) { background: var(--ap-accent); color: var(--ap-on-accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25); }
-.ap :where(button.mod-cta):hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); }
+@media (hover: hover) { .ap :where(button.mod-cta):hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); } }
 .ap :where(button.mod-warning) { background: none; color: var(--ap-bad); }
 .ap :where(button:disabled) { opacity: 0.45; transform: none; }
 .ap :is(input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="password"], input[type="search"], select, textarea) {
@@ -463,7 +463,7 @@
   border-radius: var(--ap-r-pill); background: var(--ap-fill); color: var(--ap-label); font: 500 13px/18px var(--ap-font);
   font-variant-numeric: tabular-nums; box-shadow: none; white-space: nowrap;
 }
-.ap button.ap-pill-select:hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap button.ap-pill-select:hover { background: var(--ap-fill-strong); } }
 .ap button.ap-pill-select.is-active { background: var(--ap-accent-tint); color: var(--ap-accent); }
 .ap button.ap-pill-select svg { width: 14px; height: 14px; color: var(--ap-label-3); }
 .ap button.ap-pill-select.is-active svg { color: inherit; }
@@ -478,7 +478,7 @@
 .ap .ap-popover-head { display: flex; align-items: center; justify-content: space-between; gap: var(--ap-s2); margin-bottom: var(--ap-s2); font: var(--ap-headline); font-variant-numeric: tabular-nums; }
 .ap .ap-month-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 .ap .ap-month-grid button { padding: 6px 0; justify-content: center; background: transparent; }
-.ap .ap-month-grid button:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap .ap-month-grid button:hover { background: var(--ap-fill); } }
 .ap .ap-month-grid button.is-selected { background: var(--ap-accent); color: var(--ap-on-accent); }
 .ap .ap-month-grid button.is-today:not(.is-selected) { color: var(--ap-accent); font-weight: 600; }
 
@@ -557,7 +557,7 @@
 .tcd .tcd-tight { font-weight: 600; color: var(--tcd-warn-text); }
 .tcd .tcd-steps { display: grid; margin-top: var(--ap-s2); }
 .tcd .tcd-step { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; align-items: center; gap: var(--ap-s2); min-height: 32px; padding: 4px 6px; margin-inline: -6px; border-radius: 8px; cursor: pointer; }
-.tcd .tcd-step:hover { background: var(--ap-fill); }
+@media (hover: hover) { .tcd .tcd-step:hover { background: var(--ap-fill); } }
 .tcd .tcd-step:active { background: var(--ap-fill-strong); }
 .tcd .tcd-step:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: -2px; }
 .tcd .tcd-step-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ap-label-3); }
@@ -594,7 +594,7 @@
 /* Share: a quiet icon in the hero's corner */
 .tcd .tcd-hero { position: relative; }
 .tcd .tcd-share { position: absolute; top: var(--ap-s2); right: var(--ap-s2); color: var(--ap-label-2); }
-.tcd .tcd-share:hover { color: var(--ap-label); }
+@media (hover: hover) { .tcd .tcd-share:hover { color: var(--ap-label); } }
 .tcd .tcd-hero-title { padding-right: 28px; }
 
 /* Phone and tablet: finger-sized step rows, and room under the floating navigation bar */

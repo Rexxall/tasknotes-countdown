@@ -119,7 +119,7 @@
 .ap-row-desc { font: var(--ap-subhead); color: var(--ap-label-2); }
 .ap-row-value { font: var(--ap-body); color: var(--ap-label-2); }
 .ap-row.is-link { cursor: pointer; }
-.ap-row.is-link:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-row.is-link:hover { background: var(--ap-fill); } }
 .ap-chevron { width: 7px; height: 12px; color: var(--ap-label-3); }
 
 /* Obsidian's native settings as grouped lists: add "ap ap-settings" to the tab's containerEl.
@@ -210,17 +210,17 @@
   background: var(--ap-fill); color: var(--ap-label); white-space: nowrap;
   transition: background var(--ap-fast) var(--ap-ease), transform var(--ap-fast) var(--ap-ease);
 }
-.ap-btn:hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap-btn:hover { background: var(--ap-fill-strong); } }
 .ap-btn:active { transform: scale(0.96); }
 .ap-btn:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: 2px; }
 .ap-btn.is-primary { background: var(--ap-accent); color: var(--ap-on-accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25); }
-.ap-btn.is-primary:hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); }
+@media (hover: hover) { .ap-btn.is-primary:hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); } }
 .ap-btn.is-tinted { background: var(--ap-accent-tint); color: var(--ap-accent); }
 .ap-btn.is-plain { background: none; color: var(--ap-accent); padding-inline: 6px; }
-.ap-btn.is-plain:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-btn.is-plain:hover { background: var(--ap-fill); } }
 .ap-btn.is-danger { color: var(--ap-bad); }
 .ap-btn.is-outline { background: var(--ap-page); box-shadow: var(--ap-hair); }
-.ap-btn.is-outline:hover { background: var(--ap-group); }
+@media (hover: hover) { .ap-btn.is-outline:hover { background: var(--ap-group); } }
 .ap-btn.is-large { font: 600 14px/20px var(--ap-font); padding: 10px 20px; }
 .ap-btn:disabled, .ap-btn[aria-disabled="true"] { opacity: 0.45; cursor: default; transform: none; }
 
@@ -241,7 +241,7 @@
   padding: 8px var(--ap-s3); border-radius: var(--ap-r-field); cursor: pointer;
   transition: background var(--ap-fast) var(--ap-ease);
 }
-.ap-item:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap-item:hover { background: var(--ap-fill); } }
 .ap-item[aria-selected="true"], .ap-item.is-selected { background: var(--ap-accent); color: var(--ap-on-accent); }
 .ap-item[aria-selected="true"] .ap-item-sub, .ap-item.is-selected .ap-item-sub { color: color-mix(in srgb, var(--ap-on-accent) 78%, transparent); }
 .ap-item-title { font: var(--ap-body); font-weight: 500; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

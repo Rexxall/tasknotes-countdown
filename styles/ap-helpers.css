@@ -70,10 +70,10 @@
   font: 500 13px/18px var(--ap-font); padding: 6px 14px; height: auto;
   transition: background var(--ap-fast) var(--ap-ease), transform var(--ap-fast) var(--ap-ease);
 }
-.ap :where(button:not(.clickable-icon)):hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap :where(button:not(.clickable-icon)):hover { background: var(--ap-fill-strong); } }
 .ap :where(button:not(.clickable-icon)):active { transform: scale(0.97); }
 .ap :where(button.mod-cta) { background: var(--ap-accent); color: var(--ap-on-accent); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25); }
-.ap :where(button.mod-cta):hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); }
+@media (hover: hover) { .ap :where(button.mod-cta):hover { background: color-mix(in srgb, var(--ap-accent) 88%, black); } }
 .ap :where(button.mod-warning) { background: none; color: var(--ap-bad); }
 .ap :where(button:disabled) { opacity: 0.45; transform: none; }
 .ap :is(input[type="text"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="password"], input[type="search"], select, textarea) {
@@ -112,7 +112,7 @@
   border-radius: var(--ap-r-pill); background: var(--ap-fill); color: var(--ap-label); font: 500 13px/18px var(--ap-font);
   font-variant-numeric: tabular-nums; box-shadow: none; white-space: nowrap;
 }
-.ap button.ap-pill-select:hover { background: var(--ap-fill-strong); }
+@media (hover: hover) { .ap button.ap-pill-select:hover { background: var(--ap-fill-strong); } }
 .ap button.ap-pill-select.is-active { background: var(--ap-accent-tint); color: var(--ap-accent); }
 .ap button.ap-pill-select svg { width: 14px; height: 14px; color: var(--ap-label-3); }
 .ap button.ap-pill-select.is-active svg { color: inherit; }
@@ -127,7 +127,7 @@
 .ap .ap-popover-head { display: flex; align-items: center; justify-content: space-between; gap: var(--ap-s2); margin-bottom: var(--ap-s2); font: var(--ap-headline); font-variant-numeric: tabular-nums; }
 .ap .ap-month-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
 .ap .ap-month-grid button { padding: 6px 0; justify-content: center; background: transparent; }
-.ap .ap-month-grid button:hover { background: var(--ap-fill); }
+@media (hover: hover) { .ap .ap-month-grid button:hover { background: var(--ap-fill); } }
 .ap .ap-month-grid button.is-selected { background: var(--ap-accent); color: var(--ap-on-accent); }
 .ap .ap-month-grid button.is-today:not(.is-selected) { color: var(--ap-accent); font-weight: 600; }
 

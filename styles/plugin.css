@@ -65,7 +65,7 @@
 .tcd .tcd-tight { font-weight: 600; color: var(--tcd-warn-text); }
 .tcd .tcd-steps { display: grid; margin-top: var(--ap-s2); }
 .tcd .tcd-step { display: grid; grid-template-columns: 8px minmax(0, 1fr) auto; align-items: center; gap: var(--ap-s2); min-height: 32px; padding: 4px 6px; margin-inline: -6px; border-radius: 8px; cursor: pointer; }
-.tcd .tcd-step:hover { background: var(--ap-fill); }
+@media (hover: hover) { .tcd .tcd-step:hover { background: var(--ap-fill); } }
 .tcd .tcd-step:active { background: var(--ap-fill-strong); }
 .tcd .tcd-step:focus-visible { outline: 2px solid var(--ap-accent); outline-offset: -2px; }
 .tcd .tcd-step-dot { width: 8px; height: 8px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ap-label-3); }
@@ -102,7 +102,7 @@
 /* Share: a quiet icon in the hero's corner */
 .tcd .tcd-hero { position: relative; }
 .tcd .tcd-share { position: absolute; top: var(--ap-s2); right: var(--ap-s2); color: var(--ap-label-2); }
-.tcd .tcd-share:hover { color: var(--ap-label); }
+@media (hover: hover) { .tcd .tcd-share:hover { color: var(--ap-label); } }
 .tcd .tcd-hero-title { padding-right: 28px; }
 
 /* Phone and tablet: finger-sized step rows, and room under the floating navigation bar */
