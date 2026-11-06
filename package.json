@@ -1,6 +1,6 @@
 {
 	"name": "tasknotes-countdown",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Countdown view for TaskNotes due dates.",
 	"main": "main.js",
 	"private": true,

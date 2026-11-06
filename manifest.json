@@ -1,7 +1,7 @@
 {
 	"id": "tasknotes-countdown",
 	"name": "TaskNotes Countdown",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"minAppVersion": "1.12.2",
 	"description": "Count down to TaskNotes due dates and see whether you can still make it, with steps left, the pace you need, when to start, and who you are waiting on.",
 	"author": "Rexxall",
