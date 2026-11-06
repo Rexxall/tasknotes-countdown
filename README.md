@@ -1,10 +1,39 @@
-# TaskNotes Countdown
+<p align="right"><a href="README_zh.md">中文</a></p>
 
-Days left to your [TaskNotes](https://github.com/callumalpass/tasknotes) due dates, and whether you can still make them: exams, applications, anything with a `due` date.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
+  <img src="assets/readme/hero-light.svg" width="100%" alt="TaskNotes Countdown: days left is the easy part; can you still make it? A deadline five days away shows 75% of the time gone, tight at 1.5 hours a day, one step that should already have started and one waiting on an advisor.">
+</picture>
 
-![Countdown view and sidebar card, light](docs/screenshots/countdown-light.png)
+<p align="center"><a href="https://community.obsidian.md/plugins/tasknotes-countdown"><b>Install from Obsidian</b></a></p>
 
-A countdown app knows the date. TaskNotes also knows the steps, the time estimates and the time you have already tracked, so this plugin answers the question that matters before an exam or an application: **can I still make it?**
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/demo-dark.gif">
+  <img src="assets/readme/demo-light.gif" width="100%" alt="A Countdown base in Obsidian. The camera moves in on the nearest deadline: 75% of the time gone, Tight at 1.5 hours a day, Translate transcript should already have started, the recommendation letter has been waiting 6 days. The share button turns it into an image card, then the hourglass in the ribbon opens the same plan in the sidebar.">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/cards-dark.svg">
+  <img src="assets/readme/cards-light.svg" width="100%" alt="The pace it needs: hours left, and how much a day. When to start: a latest start day for each step. Who to chase: waiting steps, and for how long.">
+</picture>
+
+## Start in three steps
+
+1. Install **TaskNotes Countdown** from *Settings → Community plugins → Browse* and enable it.
+2. Turn on the core **Bases** plugin and run **Create or open countdown base**.
+3. Give a deadline's steps a `projects` link to it and a time estimate in TaskNotes.
+
+**Needs** [TaskNotes](https://github.com/callumalpass/tasknotes) 4 and Obsidian 1.12.2+, desktop or mobile. **Costs** nothing: no account, no network, and it never changes a task.
+
+## Everything else
+
+<details>
+<summary><b>Every feature</b></summary>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/countdown-dark.png">
+  <img src="docs/screenshots/countdown-light.png" width="100%" alt="The Countdown base with the Next deadlines sidebar beside it.">
+</picture>
 
 - **Work left and the pace it needs.** Under the nearest deadline: steps left, hours left and how much a day that means. It turns orange (*Tight*) when the pace is more than the hours you said you can give.
 - **When each step must start.** Every open subtask gets a latest start day: its due date, minus a buffer, minus the days its remaining work needs. Steps that should start today, or should already have started, are marked.
@@ -18,17 +47,19 @@ A countdown app knows the date. TaskNotes also knows the steps, the time estimat
 - **Read-only, and nothing to lose.** The plugin never changes a task and stores nothing of its own beyond settings. Clicking opens the task note.
 - **Follows TaskNotes.** Completed statuses, the default status, the archive tag, the task tag or property, and renamed fields come from your TaskNotes settings.
 - **Light at startup.** Nothing is read while Obsidian starts. Tasks are read once after TaskNotes reports its cache is ready, then once per change, and every view draws from that one read.
-- English, Chinese and Japanese, following Obsidian's language.
 
-![Dark](docs/screenshots/countdown-dark.png)
+</details>
 
-## Getting started
+<details>
+<summary><b>Getting started in detail</b></summary>
 
 1. Install and enable TaskNotes 4 and turn on the core **Bases** plugin.
 2. Run **Create or open countdown base**. It writes `Countdown.base` into the folder TaskNotes keeps its views in (by default `TaskNotes/Views`) and opens it. An existing file is opened, never overwritten.
 3. Or add a *Countdown* view to any base you already have. View options: date property, status property, how many days count as close, and whether to show completed tasks.
 
-## In a daily note
+**How subtasks are found.** A task is a step of a deadline when its `projects` link to that deadline's note, which is how TaskNotes records subtasks. Give steps a time estimate in TaskNotes to get hours and start days; without estimates you still see the steps and the countdown.
+
+**In a daily note:**
 
 ````markdown
 ```tasknotes-countdown
@@ -39,11 +70,10 @@ tags: exam, application
 
 Both lines are optional; without them the block uses the sidebar's tags and shows three deadlines.
 
-## How subtasks are found
+</details>
 
-A task is a step of a deadline when its `projects` link to that deadline's note, which is how TaskNotes records subtasks. Give steps a time estimate in TaskNotes to get hours and start days; without estimates you still see the steps and the countdown.
-
-## Settings
+<details>
+<summary><b>Settings</b></summary>
 
 | Setting | Default | |
 |---|---|---|
@@ -55,15 +85,33 @@ A task is a step of a deadline when its `projects` link to that deadline's note,
 | Buffer days | 1 | Each step is planned to finish this many days early. |
 | Waiting marker | `waiting` | A context, tag or status that means you are waiting on someone. |
 
-## How it reads TaskNotes
+</details>
 
-The sidebar, status bar, note blocks and plans use the [TaskNotes runtime API](https://github.com/callumalpass/tasknotes/blob/main/docs/javascript-api.md) (`apiVersion` 1): `tasks.list` (one call per change, shared by every view), `catalog.statuses`, `settings.snapshot`, and the task and lifecycle events. Subtask links are resolved with Obsidian's link resolver. It checks the version and capabilities first and shows a notice instead of failing when TaskNotes is off or too old. The Bases view reads note properties through Bases itself, so its countdown keeps working while TaskNotes is disabled; plans and waiting lists need TaskNotes.
-
-## Privacy
+<details>
+<summary><b>Privacy and what the plugin touches</b></summary>
 
 No network requests. Nothing leaves your vault. The plugin writes only two kinds of file, and only when you ask: `Countdown.base` when you run that command, and a share image when the clipboard cannot take it.
 
-## Development
+**Clipboard:** only written, never read, and only when you press share.
+
+</details>
+
+<details>
+<summary><b>How it reads TaskNotes</b></summary>
+
+The sidebar, status bar, note blocks and plans use the [TaskNotes runtime API](https://github.com/callumalpass/tasknotes/blob/main/docs/javascript-api.md) (`apiVersion` 1): `tasks.list` (one call per change, shared by every view), `catalog.statuses`, `settings.snapshot`, and the task and lifecycle events. Subtask links are resolved with Obsidian's link resolver. It checks the version and capabilities first and shows a notice instead of failing when TaskNotes is off or too old. The Bases view reads note properties through Bases itself, so its countdown keeps working while TaskNotes is disabled; plans and waiting lists need TaskNotes.
+
+</details>
+
+<details>
+<summary><b>Language and themes</b></summary>
+
+English, Chinese and Japanese, following Obsidian's language. Colours, radii and spacing come from your theme's variables; light and dark mode both work, and the share image uses your theme's colours.
+
+</details>
+
+<details>
+<summary><b>Development and verifying a release</b></summary>
 
 ```bash
 npm install
@@ -78,10 +126,19 @@ A demo vault with only TaskNotes and this plugin, and made-up tasks dated relati
 demo/reset.sh            # rebuild ~/Obsidian/TaskNotes-Countdown-Demo from scratch
 demo/open.sh --lang en   # open it in a separate Obsidian instance (en, zh or ja)
 demo/shots.sh docs/screenshots
+assets/readme/source/record.sh   # the README art and demo GIFs
 ```
 
 `reset.sh` downloads TaskNotes 4.16.1 from its GitHub release on first run and only deletes a folder that carries its `.tnc-demo` marker.
 
-## License
+Releases are built by GitHub Actions from a version tag, with build provenance attested. To check a download:
 
-MIT
+```bash
+gh attestation verify main.js --owner Rexxall
+```
+
+Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
+</details>
+
+MIT License

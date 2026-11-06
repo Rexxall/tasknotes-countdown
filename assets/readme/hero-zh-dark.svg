@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="t d">
+  <title id="t">TaskNotes Countdown</title>
+  <desc id="d">五天后截止的申请：时间已过 75%，每天要 1.5 小时，有一步该开始了，还有一步在等导师。</desc>
+  <rect width="1200" height="400" rx="28" fill="#15141B"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif">
+    <text x="64" y="112" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" letter-spacing="2" fill="#A48BFF">OBSIDIAN 插件 · 配合 TASKNOTES</text>
+    <text x="62" y="190" font-size="60" font-weight="700" letter-spacing="-1.5" fill="#EEECF5">TaskNotes Countdown</text>
+    <text x="64" y="248" font-size="29" fill="#9C98AF">剩几天谁都会算，</text>
+    <text x="64" y="288" font-size="29" fill="#EEECF5">难的是：还来得及吗？</text>
+    <text x="64" y="344" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="17" fill="#9C98AF">免费 · 只读 · 不联网</text>
+  </g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif">
+    <rect x="740" y="44" width="400" height="312" rx="22" fill="#1E1D26" stroke="#2C2A36"/>
+    <text x="768" y="88" font-size="21" font-weight="600" fill="#EEECF5">研究生申请</text>
+    <path d="M1100 74 V90 M1093 81 L1100 74 L1107 81 M1092 86 V96 H1108 V86" fill="none" stroke="#9C98AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="764" y="160" font-size="76" font-weight="700" letter-spacing="-2" fill="#EEECF5">5</text>
+    <text x="816" y="158" font-size="20" fill="#9C98AF">天</text>
+    <rect x="768" y="182" width="344" height="6" rx="3" fill="#34323F"/>
+    <rect x="768" y="182" width="258" height="6" rx="3" fill="#9C98AF"/>
+    <text x="768" y="210" font-size="15" fill="#9C98AF">时间已过 75%</text>
+    <path d="M768 228 H1112" stroke="#2C2A36"/>
+    <rect x="768" y="242" width="52" height="26" rx="13" fill="#3A2A16"/>
+    <text x="794.0" y="260" font-size="15" font-weight="600" text-anchor="middle" fill="#F0A046">很紧</text>
+    <text x="832" y="260" font-size="16" fill="#9C98AF">还剩 5 步 · 每天 1.5 小时</text>
+    <circle cx="774" cy="296" r="5" fill="#F07C80"/>
+    <text x="788" y="302" font-size="17" fill="#EEECF5">翻译成绩单</text>
+    <text x="1112" y="302" font-size="15" font-weight="600" text-anchor="end" fill="#F07C80">该开始了</text>
+    <circle cx="774" cy="330" r="4.5" fill="none" stroke="#A48BFF" stroke-width="2"/>
+    <text x="788" y="336" font-size="17" fill="#EEECF5">导师推荐信</text>
+    <text x="1112" y="336" font-size="15" text-anchor="end" fill="#9C98AF">已等 6 天</text>
+  </g>
+</svg>
