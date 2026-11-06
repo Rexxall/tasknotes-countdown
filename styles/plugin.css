@@ -41,7 +41,7 @@
 .tcd .tcd-count { font: var(--ap-caption); color: var(--ap-label-2); }
 .tcd .tcd-row { gap: var(--ap-s3); }
 .tcd .tcd-row-title { overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.tcd .tcd-row.is-done .tcd-row-title { color: var(--ap-label-2); text-decoration: line-through; text-decoration-color: var(--ap-label-3); }
+.tcd .tcd-row.is-done .tcd-row-title { color: var(--ap-label-2); text-decoration-line: line-through; }
 
 /* Days-left pill: neutral, orange when close, red when late, green when done */
 .tcd .tcd-pill { flex: none; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }

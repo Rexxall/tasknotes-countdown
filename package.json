@@ -1,6 +1,6 @@
 {
 	"name": "tasknotes-countdown",
-	"version": "0.3.1",
+	"version": "0.3.2",
 	"description": "Countdown view for TaskNotes due dates.",
 	"main": "main.js",
 	"private": true,
@@ -11,7 +11,12 @@
 		"test": "node tests/run-tests.mjs",
 		"lint": "eslint --max-warnings 0 . && eslint --max-warnings 0 -c eslint.scorecard.config.mjs . && stylelint --max-warnings 0 \"styles/*.css\" styles.css"
 	},
-	"keywords": ["tasknotes", "countdown", "deadline", "bases"],
+	"keywords": [
+		"tasknotes",
+		"countdown",
+		"deadline",
+		"bases"
+	],
 	"author": "Rexxall",
 	"license": "MIT",
 	"devDependencies": {
